@@ -55,6 +55,7 @@
       >
         <v-icon>menu</v-icon>
       </v-btn>
+      <nuxt-link to="/logout" style="color:white">ログアウト</nuxt-link>
     </v-toolbar>
     <v-content>
       <v-container>

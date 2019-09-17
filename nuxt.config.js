@@ -1,4 +1,6 @@
 const pkg = require('./package')
+require('dotenv').config()
+const { API_KEY, AUTH_DOMAIN, DATABASE_URL, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID } = process.env
 
 module.exports = {
   mode: 'universal',
@@ -35,7 +37,9 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/vuetify'
+    '@/plugins/vuetify',
+    '@/plugins/firebase',
+    '@/plugins/persistedstate'
   ],
 
   /*
@@ -43,7 +47,8 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/dotenv'
   ],
   /*
   ** Axios module configuration
@@ -62,5 +67,16 @@ module.exports = {
     extend(config, ctx) {
       
     }
+  },
+  env: {
+    API_KEY,
+    AUTH_DOMAIN,
+    DATABASE_URL,
+    PROJECT_ID,
+    STORAGE_BUCKET,
+    MESSAGING_SENDER_ID
+  },
+  router: {
+    middleware: 'auth'
   }
 }
