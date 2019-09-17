@@ -39,7 +39,7 @@ module.exports = {
   plugins: [
     '@/plugins/vuetify',
     '@/plugins/firebase',
-    '@/plugins/persistedstate'
+    { src: "~plugins/persistedstate.js", ssr: false }
   ],
 
   /*

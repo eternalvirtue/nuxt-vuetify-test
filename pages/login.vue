@@ -1,62 +1,81 @@
 <template>
-    <section class="container">
-        <div>
-            <h1 class="title">ログイン画面</h1>
-            <section class="ex__box" v-if="!isLogin">
-                <p><input type="text" v-model="email" placeholder="メールアドレス"></p>
-                <p><input type="password" v-model="password" placeholder="パスワード"></p>
-                <p class="errMessage" v-if="authError">{{authError}}</p>
-                <div class="links">
-                    <a @click="login()" class="button--green">ログイン</a>
-                </div>
-                <nuxt-link to="/createAccount">create account</nuxt-link>
-            </section>
-
-        </div>
-    </section>
+  <div>
+    <v-container fluid fill-height>
+      <v-layout align-center justify-center>
+        <v-flex xs12 sm8 md4>
+          <v-card>
+            <v-toolbar>
+              <v-toolbar-title>Login</v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+              <v-form>
+                <v-text-field
+                  v-model="email"
+                  :counter="32"
+                  label="email"
+                  prepend-icon="email"
+                ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  :append-icon="show_password ? 'visibility' : 'visibility_off'"
+                  :type="show_password ? 'text' : 'password'"
+                  :counter="32"
+                  label="password"
+                  prepend-icon="lock"
+                  @click:append="show_password = !show_password"
+                ></v-text-field>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                flat
+                v-on:click="gotoSignup"
+              >SIGNUP</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn
+                v-on:click="doLogin"
+              >LOGIN</v-btn>
+            </v-card-actions>
+            <hr>
+            <v-spacer></v-spacer>
+            <v-btn
+              flat
+              v-on:click="gotoResetPassword"
+            >パスワードを忘れたかたはこちら</v-btn>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </div>
 </template>
 
 <script>
-//
-const Cookie = process.client ? require('js-cookie') : undefined
+import firebase from '~/plugins/firebase'
+
 export default {
   layout: 'account',
-  data: function(){
+  data() {
     return {
-        email: '',
-        password: '',
+      email: '',
+      password: '',
+      show_password: false,
     }
   },
-  computed: {
-      isLogin(){
-          return this.$store.state.isLogin;
-      },
-      authError(){
-          return this.$store.state.authError;
-      }
-  },
   methods: {
-      login: function () {
-      this.$store.dispatch('Account/login', {email:this.email, password:this.password});
-      /*firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
-        user => {
-          alert('Success!');
-          this.$router.push('/');
-        },
-        err => {
-          alert(err.message);
-        }
-      )
-      }*/
-        setTimeout(() => { // 非同期リクエストのタイムアウトをシミュレートします
-          const auth = {
-            accessToken: 'someStringGotFromApiServiceWithAjax'
-          }
-          this.$store.dispatch('Account/setAuth', auth); // クライアントレンダリング用に変更する
-          Cookie.set('auth', auth); // サーバサイドレンダリングのためにクッキーにトークンを保存する
-          this.$router.push('/');
-        }, 1000);
-      }
+    doLogin() {
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then(user => {
+          this.$router.push("/")
+        }).catch((error) => {
+          alert(error)
+        })
+    },
+    gotoSignup() {
+      this.$router.push("/createAccount")
+    },
+    gotoResetPassword() {
+      this.$router.push("/reset-password")
+    }
   }
 }
 </script>
